@@ -7,7 +7,6 @@ import { Row, Col, Button, Spinner  } from 'react-bootstrap';
 class ProductsList extends React.Component{
     constructor(props){
         super(props);
-        this.currentPage = 1;
         this.state = {
             productPage: 1,
             loadMoreData: true,
@@ -29,7 +28,6 @@ class ProductsList extends React.Component{
                 this.props.setProductsPage({ pageNumber: 2 });
             }
         }
-        this.currentPage++;
         
     }
     renderProducts(){
@@ -51,16 +49,16 @@ class ProductsList extends React.Component{
     }
 
     getProducts(){
-        if(this.state.error === ""){
-            this.setState(()=>({ loadMoreData: false}));
-        }
-        if(this.state.productPage >= this.currentPage){
+        this.setState(()=>({ loadMoreData: false}));
+        if(this.state.error !== ""){
+            this.setState(()=>({ loadMoreData: true}));
+        }else{
             this.props.fetchProducts(this.state.productPage).then((res)=>{
                 this.setState((prevState)=>({ productPage: prevState.productPage + 1 , loadMoreData: true}));
             }).catch((err)=>{
                 this.setState(()=>({ error: err }));
+                this.setState(()=>({ loadMoreData: true}));
             });
-            this.currentPage++;
         }
         
     }
